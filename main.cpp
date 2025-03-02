@@ -12,11 +12,12 @@ int main() {
     view.set_vertices();
 
     TSP_Solver solver(view.get_params());
-    Path path = solver.solve();
-    cout << "Path length: " << path.length << '\n';
+    Result result = solver.solve();
+    cout << "Time: " << result.time.count() << " ns\n";
+    cout << "Path length: " << result.path.length << '\n';
     cout << "Vertices order:\n";
-    for (size_t i = 0; i < path.size; ++i) {
-        cout << (path.vertices[i] + 1) << ' ';
+    for (size_t i = 0; i < result.path.size; ++i) {
+        cout << (result.path.vertices[i] + 1) << ' ';
     }
     cout << '\n';
     return 0;

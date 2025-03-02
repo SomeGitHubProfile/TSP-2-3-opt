@@ -2,6 +2,7 @@
 
 #include "Params.h"
 #include "Path.h"
+#include "Result.h"
 
 class TSP_Solver {
 private:
@@ -13,5 +14,5 @@ private:
 public:
     TSP_Solver(const Params&) noexcept;
 
-    Path solve() const noexcept;
+    Result solve() const noexcept;
 };
