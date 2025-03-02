@@ -5,14 +5,23 @@
 #include <cmath>
 
 #include "Random.h"
-#include "Opt.h"
 
 #define sqr(x) ((x) * (x))
 
 #define path_vertex(i) params.vertices[path.vertices[i]]
 
+#define get_point(i) Point(i, path.vertices[i])
+
 long double calculate_distance(const Coords& a, const Coords& b) {
     return sqrt(sqr(a.x - b.x) + sqr(a.y - b.y));
+}
+
+long double TSP_Solver::calculate_distance(const Path& path, const Combination& combination) const noexcept {
+    long double distance = 0;
+    for (auto edge : combination.edges) {
+        distance += ::calculate_distance(path_vertex(edge.from.index), path_vertex(edge.to.index));
+    }
+    return distance;
 }
 
 Path TSP_Solver::generate_random_path() const noexcept {
@@ -26,7 +35,7 @@ Path TSP_Solver::generate_random_path() const noexcept {
     }
 
     for (size_t i = 1; i < path.size; ++i) {
-        path.length += calculate_distance(path_vertex(i - 1), path_vertex(i));
+        path.length += ::calculate_distance(path_vertex(i - 1), path_vertex(i));
     }
     return path;
 }
@@ -51,6 +60,21 @@ Path TSP_Solver::generate_random_path() const noexcept {
 //    return path;
 //}
 
+tuple<Combination, long double, bool> TSP_Solver::get_miminal_combination(const Path& path, Opt* opt) const noexcept {
+    Combination minimal_combination = opt->combinations[0];
+    long double minimal_distance = calculate_distance(path, minimal_combination);
+    bool flag = false;
+    for (Combination combination : opt->combinations) {
+        long double distance = calculate_distance(path, combination);
+        if (distance < minimal_distance) {
+            flag = true;
+            minimal_distance = distance;
+            minimal_combination = combination;
+        }
+    }
+    return {minimal_combination, minimal_distance, flag};
+}
+
 Path TSP_Solver::opt2() const noexcept {
     Path path = generate_random_path();
     bool flag;
@@ -58,11 +82,21 @@ Path TSP_Solver::opt2() const noexcept {
         flag = false;
         for (size_t i = 0; i < params.number_of_vertices; ++i) {
             for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
-                Opt2 opt(vector<Edge>({
-                    {path.vertices + i, path.vertices + i + 1},
-                    {path.vertices + j, path.vertices + j + 1}
+                Opt* opt = new Opt2(vector<Edge>({
+                    {get_point(i), get_point(i + 1)},
+                    {get_point(j), get_point(j + 1)}
                 }));
-                for (Combination combination : opt.combinations) {
+                auto [combination, distance, new_flag] = get_miminal_combination(path, opt);
+                if (!new_flag) {
+                    continue;
+                }
+                flag = true;
+                path.length -= distance;
+                for (auto edge : combination.segments_to_reverse) {
+                    std::reverse(path.vertices + edge.from.index, path.vertices + edge.to.index);
+                }
+                for (auto edge : combination.edges) {
+
                 }
             }
         }
