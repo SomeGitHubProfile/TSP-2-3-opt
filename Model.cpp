@@ -7,10 +7,8 @@
 #include "Random.h"
 
 #define sqr(x) ((x) * (x))
-
 #define path_vertex(i) params.vertices[path.vertices[i]]
-
-#define get_edge(i) {i, i + 1, false}
+#define get_edge(i) {i, i + 1}
 
 long double calculate_distance(const Coords& a, const Coords& b) {
     return sqrt(sqr(a.x - b.x) + sqr(a.y - b.y));
@@ -62,17 +60,18 @@ Path TSP_Solver::generate_random_path() const noexcept {
 
 tuple<Combination, long double, bool> TSP_Solver::get_miminal_combination(const Path& path, Opt* opt) const noexcept {
     Combination minimal_combination = opt->initial_combination;
-    long double minimal_distance = calculate_distance(path, minimal_combination);
-    bool flag = false;
+    long double initial_distance = calculate_distance(path, minimal_combination);
+    long double minimal_distance = initial_distance;
+    bool can_improve = false;
     for (Combination combination : opt->combinations) {
         long double distance = calculate_distance(path, combination);
         if (distance < minimal_distance) {
-            flag = true;
+            can_improve = true;
             minimal_distance = distance;
             minimal_combination = combination;
         }
     }
-    return {minimal_combination, minimal_distance, flag};
+    return {minimal_combination, initial_distance - minimal_distance, can_improve};
 }
 
 Path TSP_Solver::opt2(Path path) const noexcept {
@@ -82,27 +81,30 @@ Path TSP_Solver::opt2(Path path) const noexcept {
         for (size_t i = 0; i < params.number_of_vertices; ++i) {
             for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
                 Opt* opt = new Opt2({get_edge(i), get_edge(j)});
-                Combination combination;
-                long double distance;
-                std::tie(combination, distance, flag) = get_miminal_combination(path, opt);
-                if (!flag) {
+                auto [combination, distance, can_improve] = get_miminal_combination(path, opt);
+                delete opt;
+                if (!can_improve) {
                     continue;
                 }
+                flag = true;
                 path.length -= distance;
                 size_t* new_vertices = new size_t[path.size];
-                size_t x = 0, y = 0, vertex ;
-                int reversed = 1;
-                for (auto next_edge = combination.begin(); next_edge != combination.end(); next_edge = ++next_edge) {
-                    for (; x < next_edge->from; ++x, y += reversed) {
-                        new_vertices[x] = path.vertices[y];
-                    }
-                    new_vertices[x] = next_edge->from;
-                    new_vertices[++x] = next_edge->to;
-                    reversed = next_edge->reversed ? -1 : 1;
-                    y = next_edge->to + reversed;
-                }
-                for (; x < path.size; ++i) {
+                size_t x = 0, y = 0;
+                for (; x < i; ++x) {
                     new_vertices[x] = path.vertices[x];
+                }
+                auto previous_edge = combination.begin();
+                auto next_edge = previous_edge + 1;
+                for (; next_edge != combination.end(); previous_edge = next_edge++) {
+                    new_vertices[x++] = path.vertices[previous_edge->from];
+                    int step = static_cast<int>(previous_edge->to < next_edge->from) * 2 - 1; // -1 if false, 1 if true
+                    for (y = previous_edge->to; y != next_edge->from; y += step) {
+                        new_vertices[x++] = path.vertices[y];
+                    }
+                }
+                new_vertices[x++] = path.vertices[previous_edge->from];
+                for (y = previous_edge->to; y < path.size; ++y) {
+                    new_vertices[x++] = path.vertices[y];
                 }
                 delete[] path.vertices;
                 path.vertices = new_vertices;

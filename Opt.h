@@ -11,7 +11,7 @@ typedef vector<Edge> Combination;
 class Opt {
 public:
     Combination initial_combination;
-    vector<Combination> combinations;
+    vector<Combination> combinations; // edges must be written according to their order
 
     Opt() noexcept;
     Opt(const Combination&) noexcept;
