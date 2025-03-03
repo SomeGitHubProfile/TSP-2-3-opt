@@ -14,6 +14,7 @@ struct Combination {
 class Opt {
 public:
     vector<Edge> edges;
+    Combination initial_combination;
     vector<Combination> combinations;
 
     Opt() noexcept;

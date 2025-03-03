@@ -18,7 +18,7 @@ long double calculate_distance(const Coords& a, const Coords& b) {
 
 long double TSP_Solver::calculate_distance(const Path& path, const Combination& combination) const noexcept {
     long double distance = 0;
-    for (auto edge : combination.edges) {
+    for (const Edge& edge : combination.edges) {
         distance += ::calculate_distance(path_vertex(edge.from.index), path_vertex(edge.to.index));
     }
     return distance;
@@ -61,7 +61,7 @@ Path TSP_Solver::generate_random_path() const noexcept {
 //}
 
 tuple<Combination, long double, bool> TSP_Solver::get_miminal_combination(const Path& path, Opt* opt) const noexcept {
-    Combination minimal_combination = opt->combinations[0];
+    Combination minimal_combination = opt->initial_combination;
     long double minimal_distance = calculate_distance(path, minimal_combination);
     bool flag = false;
     for (Combination combination : opt->combinations) {
@@ -75,8 +75,7 @@ tuple<Combination, long double, bool> TSP_Solver::get_miminal_combination(const 
     return {minimal_combination, minimal_distance, flag};
 }
 
-Path TSP_Solver::opt2() const noexcept {
-    Path path = generate_random_path();
+Path TSP_Solver::opt2(Path path) const noexcept {
     bool flag;
     do {
         flag = false;
@@ -86,21 +85,20 @@ Path TSP_Solver::opt2() const noexcept {
                     {get_point(i), get_point(i + 1)},
                     {get_point(j), get_point(j + 1)}
                 }));
-                auto [combination, distance, new_flag] = get_miminal_combination(path, opt);
-                if (!new_flag) {
+                Combination combination;
+                long double distance;
+                std::tie(combination, distance, flag) = get_miminal_combination(path, opt);
+                if (!flag) {
                     continue;
                 }
-                flag = true;
                 path.length -= distance;
-                for (auto edge : combination.segments_to_reverse) {
+                for (const Edge& edge : combination.segments_to_reverse) {
                     std::reverse(path.vertices + edge.from.index, path.vertices + edge.to.index);
-                }
-                for (auto edge : combination.edges) {
-
                 }
             }
         }
     } while (flag);
+    return path;
 }
 
 //Path TSP_Solver::opt3() const noexcept {
@@ -119,9 +117,8 @@ Path TSP_Solver::opt2() const noexcept {
 //    return path;
 //}
 
-Path TSP_Solver::opt3() const noexcept {
-    Path path = generate_random_path();
-    bool flag;
+Path TSP_Solver::opt3(Path path) const noexcept {
+    /*bool flag;
     do {
         flag = false;
         for (size_t i = 0; i < params.number_of_vertices; ++i) {
@@ -133,15 +130,17 @@ Path TSP_Solver::opt3() const noexcept {
                 }));
             }
         }
-    } while (flag);
+    } while (flag);*/
+    return path;
 }
 
 TSP_Solver::TSP_Solver(const Params& _params) noexcept : params(_params) {}
 
 Result TSP_Solver::solve() const noexcept {
+    Path random_path = generate_random_path();
     auto start = std::chrono::high_resolution_clock::now();
-    Path path = params.k == 2 ? opt2() : opt3();
+    Path path = params.k == 2 ? opt2(random_path) : opt3(random_path);
     auto finish = std::chrono::high_resolution_clock::now();
     auto time = finish - start;
-    return {path, time};
+    return {random_path, path, time};
 }
