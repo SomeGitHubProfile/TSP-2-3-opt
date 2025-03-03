@@ -10,7 +10,7 @@
 
 #define path_vertex(i) params.vertices[path.vertices[i]]
 
-#define get_point(i) Point(i, path.vertices[i])
+#define get_edge(i) {i, i + 1, false}
 
 long double calculate_distance(const Coords& a, const Coords& b) {
     return sqrt(sqr(a.x - b.x) + sqr(a.y - b.y));
@@ -18,8 +18,8 @@ long double calculate_distance(const Coords& a, const Coords& b) {
 
 long double TSP_Solver::calculate_distance(const Path& path, const Combination& combination) const noexcept {
     long double distance = 0;
-    for (const Edge& edge : combination.edges) {
-        distance += ::calculate_distance(path_vertex(edge.from.index), path_vertex(edge.to.index));
+    for (const Edge& edge : combination) {
+        distance += ::calculate_distance(path_vertex(edge.from), path_vertex(edge.to));
     }
     return distance;
 }
@@ -81,10 +81,7 @@ Path TSP_Solver::opt2(Path path) const noexcept {
         flag = false;
         for (size_t i = 0; i < params.number_of_vertices; ++i) {
             for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
-                Opt* opt = new Opt2(vector<Edge>({
-                    {get_point(i), get_point(i + 1)},
-                    {get_point(j), get_point(j + 1)}
-                }));
+                Opt* opt = new Opt2({get_edge(i), get_edge(j)});
                 Combination combination;
                 long double distance;
                 std::tie(combination, distance, flag) = get_miminal_combination(path, opt);
@@ -92,9 +89,23 @@ Path TSP_Solver::opt2(Path path) const noexcept {
                     continue;
                 }
                 path.length -= distance;
-                for (const Edge& edge : combination.segments_to_reverse) {
-                    std::reverse(path.vertices + edge.from.index, path.vertices + edge.to.index);
+                size_t* new_vertices = new size_t[path.size];
+                size_t x = 0, y = 0, vertex ;
+                int reversed = 1;
+                for (auto next_edge = combination.begin(); next_edge != combination.end(); next_edge = ++next_edge) {
+                    for (; x < next_edge->from; ++x, y += reversed) {
+                        new_vertices[x] = path.vertices[y];
+                    }
+                    new_vertices[x] = next_edge->from;
+                    new_vertices[++x] = next_edge->to;
+                    reversed = next_edge->reversed ? -1 : 1;
+                    y = next_edge->to + reversed;
                 }
+                for (; x < path.size; ++i) {
+                    new_vertices[x] = path.vertices[x];
+                }
+                delete[] path.vertices;
+                path.vertices = new_vertices;
             }
         }
     } while (flag);
@@ -123,7 +134,7 @@ Path TSP_Solver::opt3(Path path) const noexcept {
         flag = false;
         for (size_t i = 0; i < params.number_of_vertices; ++i) {
             for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
-                Opt2(vector<Edge>({
+                Opt2(Combination({
                     {nullptr, nullptr},
                     {nullptr, nullptr},
                     {nullptr, nullptr}

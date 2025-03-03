@@ -6,27 +6,23 @@
 
 using namespace std;
 
-struct Combination {
-    vector<Edge> edges;
-    vector<Edge> segments_to_reverse;
-};
+typedef vector<Edge> Combination;
 
 class Opt {
 public:
-    vector<Edge> edges;
     Combination initial_combination;
     vector<Combination> combinations;
 
     Opt() noexcept;
-    Opt(vector<Edge> _edges) noexcept;
+    Opt(const Combination&) noexcept;
 };
 
 class Opt2 : public Opt {
 public:
-    Opt2(vector<Edge> edges) noexcept;
+    Opt2(const Combination&) noexcept;
 };
 
 class Opt3 : public Opt {
 public:
-    Opt3(vector<Edge> edges) noexcept;
+    Opt3(const Combination&) noexcept;
 };
