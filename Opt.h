@@ -1,12 +1,8 @@
 #pragma once
 
-#include <vector>
-
 #include "Edge.h"
 
 using namespace std;
-
-typedef vector<Edge> Combination;
 
 class Opt {
 public:

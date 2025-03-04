@@ -38,26 +38,6 @@ Path TSP_Solver::generate_random_path() const noexcept {
     return path;
 }
 
-//Path old_opt2() {
-//    Path path = generate_random_path();
-//    bool flag;
-//    do {
-//        flag = false;
-//        for (size_t i = 0; i < params.number_of_vertices; ++i) {
-//            for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
-//                long double distance = calculate_distance(path_vertex(i), path_vertex(i + 1)) + calculate_distance(path_vertex(j), path_vertex(j + 1));
-//                long double new_distance = calculate_distance(path_vertex(i), path_vertex(j)) + calculate_distance(path_vertex(i + 1), path_vertex(j + 1));
-//                if (new_distance < distance) {
-//                    flag = true;
-//                    path.length += new_distance - distance;
-//                    std::reverse(path.vertices + i + 1, path.vertices + j + 1);
-//                }
-//            }
-//        }
-//    } while (flag);
-//    return path;
-//}
-
 tuple<Combination, long double, bool> TSP_Solver::get_miminal_combination(const Path& path, Opt* opt) const noexcept {
     Combination minimal_combination = opt->initial_combination;
     long double initial_distance = calculate_distance(path, minimal_combination);
@@ -81,33 +61,12 @@ Path TSP_Solver::opt2(Path path) const noexcept {
         for (size_t i = 0; i < params.number_of_vertices; ++i) {
             for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
                 Opt* opt = new Opt2({get_edge(i), get_edge(j)});
-                auto [combination, distance, can_improve] = get_miminal_combination(path, opt);
+                auto [combination, distance_diff, can_improve] = get_miminal_combination(path, opt);
                 delete opt;
-                if (!can_improve) {
-                    continue;
+                if (can_improve) {
+                    flag = true;
+                    path.optimize(combination, distance_diff);
                 }
-                flag = true;
-                path.length -= distance;
-                size_t* new_vertices = new size_t[path.size];
-                size_t x = 0, y = 0;
-                for (; x < i; ++x) {
-                    new_vertices[x] = path.vertices[x];
-                }
-                auto previous_edge = combination.begin();
-                auto next_edge = previous_edge + 1;
-                for (; next_edge != combination.end(); previous_edge = next_edge++) {
-                    new_vertices[x++] = path.vertices[previous_edge->from];
-                    int step = static_cast<int>(previous_edge->to < next_edge->from) * 2 - 1; // -1 if false, 1 if true
-                    for (y = previous_edge->to; y != next_edge->from; y += step) {
-                        new_vertices[x++] = path.vertices[y];
-                    }
-                }
-                new_vertices[x++] = path.vertices[previous_edge->from];
-                for (y = previous_edge->to; y < path.size; ++y) {
-                    new_vertices[x++] = path.vertices[y];
-                }
-                delete[] path.vertices;
-                path.vertices = new_vertices;
             }
         }
     } while (flag);
