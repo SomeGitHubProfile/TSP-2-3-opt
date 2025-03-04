@@ -9,3 +9,8 @@ struct Result {
     Path path;
     std::chrono::nanoseconds time;
 };
+
+struct Comparison {
+    Result opt2;
+    Result opt3;
+};

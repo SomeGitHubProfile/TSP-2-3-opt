@@ -73,46 +73,49 @@ Path TSP_Solver::opt2(Path path) const noexcept {
     return path;
 }
 
-//Path TSP_Solver::opt3() const noexcept {
-//    Path path = generate_random_path();
-//    bool flag;
-//    do {
-//        flag = false;
-//        for (size_t i = 0; i < params.number_of_vertices; ++i) {
-//            for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
-//                for (size_t k = j + 1; k < params.number_of_vertices; ++k) {
-//
-//                }
-//            }
-//        }
-//    } while (flag);
-//    return path;
-//}
-
 Path TSP_Solver::opt3(Path path) const noexcept {
-    /*bool flag;
+    bool flag;
     do {
         flag = false;
         for (size_t i = 0; i < params.number_of_vertices; ++i) {
             for (size_t j = i + 1; j < params.number_of_vertices; ++j) {
-                Opt2(Combination({
-                    {nullptr, nullptr},
-                    {nullptr, nullptr},
-                    {nullptr, nullptr}
-                }));
+                for (size_t k = j + 1; k < params.number_of_vertices; ++k) {
+                    Opt* opt = new Opt3({get_edge(i), get_edge(j), get_edge(k)});
+                    auto [combination, distance_diff, can_improve] = get_miminal_combination(path, opt);
+                    delete opt;
+                    if (can_improve) {
+                        flag = true;
+                        path.optimize(combination, distance_diff);
+                    }
+                }
             }
         }
-    } while (flag);*/
+    } while (flag);
     return path;
 }
 
 TSP_Solver::TSP_Solver(const Params& _params) noexcept : params(_params) {}
 
-Result TSP_Solver::solve() const noexcept {
-    Path random_path = generate_random_path();
+Result TSP_Solver::solve(Path random_path, Path(TSP_Solver::* opt)(Path) const noexcept) const noexcept {
     auto start = std::chrono::high_resolution_clock::now();
-    Path path = params.k == 2 ? opt2(random_path) : opt3(random_path);
+    Path path = (this->*opt)(random_path);
     auto finish = std::chrono::high_resolution_clock::now();
     auto time = finish - start;
     return {random_path, path, time};
+}
+
+Result TSP_Solver::solve(Path(TSP_Solver::* opt)(Path) const noexcept) const noexcept {
+    return solve(generate_random_path(), opt);
+}
+
+Result TSP_Solver::solve() const noexcept {
+    return solve(params.k == 2 ? &TSP_Solver::opt2 : &TSP_Solver::opt3);
+}
+
+Comparison TSP_Solver::compare_opts() const noexcept {
+    Path random_path = generate_random_path();
+    return {
+        solve(random_path, &TSP_Solver::opt2),
+        solve(random_path, &TSP_Solver::opt3)
+    };
 }
