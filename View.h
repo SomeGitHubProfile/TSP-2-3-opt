@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Params.h"
+#include "Result.h"
 
 using namespace std;
 
-class View {
+class InputView {
 protected:
     Params params;
 
@@ -13,7 +14,15 @@ public:
         return params;
     }
 
-    virtual void set_mode() noexcept = 0;
-    virtual void set_vertices() noexcept = 0;
-    virtual void set_k() noexcept = 0;
+    virtual void input() = 0;
+};
+
+class OutputViewResult {
+protected:
+    Result result;
+
+public:
+    OutputViewResult(const Result& _result) noexcept : result(_result) {}
+
+    virtual void output() = 0;
 };

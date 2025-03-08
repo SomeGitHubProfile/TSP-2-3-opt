@@ -1,31 +1,19 @@
-#include <iostream>
-
 #include "ConsoleView.h"
 #include "Model.h"
 
-using namespace std;
-
-void print_path(const Path& path) {
-    cout << "Path length: " << path.length << '\n';
-    cout << "Vertices order:\n";
-    for (size_t i = 0; i < path.size; ++i) {
-        cout << (path.vertices[i] + 1) << ' ';
-    }
-    cout << '\n';
-}
+#include <iostream>
 
 int main() {
-    ConsoleView view;
-    view.set_mode();
-    view.set_k();
-    view.set_vertices();
-
-    TSP_Solver solver(view.get_params());
-    Result result = solver.solve();
-    cout << "Time: " << result.time.count() << " ns\n";
-    cout << "Initial path:\n";
-    print_path(result.initial_path);
-    cout << "Result path:\n";
-    print_path(result.path);
+    try {
+        unique_ptr<InputView> input_view = make_unique< ConsoleInputView>();
+        input_view->input();
+        TSP_Solver solver(input_view->get_params());
+        Result result = solver.solve();
+        unique_ptr<OutputViewResult> output_view = make_unique< ConsoleOutputViewResult>(result);
+        output_view->output();
+    } catch (const exception& e) {
+        cout << "Error!\n";
+        cout << e.what() << '\n';
+    }
     return 0;
 }

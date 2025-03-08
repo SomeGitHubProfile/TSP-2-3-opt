@@ -1,16 +1,26 @@
 #pragma once
 
+#include <vector>
+#include <string>
 #include <chrono>
 
 #include "Path.h"
 
-struct Result {
-    Path initial_path;
+using namespace std;
+
+struct Solution {
     Path path;
     std::chrono::nanoseconds time;
+    string algorithm_name;
 };
 
-struct Comparison {
-    Result opt2;
-    Result opt3;
+struct Result {
+    Path initial_path;
+    vector<Solution> solutions;
+
+    Result() noexcept;
+    Result(size_t) noexcept;
+    Result(const Path&, size_t) noexcept;
+    Result(vector<Solution>) noexcept;
+    Result(const Path&, vector<Solution>) noexcept;
 };

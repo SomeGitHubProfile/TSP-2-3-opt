@@ -2,12 +2,12 @@
 
 #include "View.h"
 
-using namespace std;
+#include <string>
 
-class ConsoleView : public View {
+class FileInputView : public InputView {
+private:
+    std::string path;
 public:
-    ConsoleView(const char* path);
-    virtual void set_mode() noexcept override;
-    virtual void set_vertices() noexcept override;
-    virtual void set_k() noexcept override;
+    FileInputView(const std::string&) noexcept;
+    void read_file() noexcept;
 };

@@ -96,26 +96,37 @@ Path TSP_Solver::opt3(Path path) const noexcept {
 
 TSP_Solver::TSP_Solver(const Params& _params) noexcept : params(_params) {}
 
-Result TSP_Solver::solve(Path random_path, Path(TSP_Solver::* opt)(Path) const noexcept) const noexcept {
+Solution TSP_Solver::solve(Path random_path, Path(TSP_Solver::* opt)(Path) const noexcept, const char* algorithm_name) const noexcept {
     auto start = std::chrono::high_resolution_clock::now();
     Path path = (this->*opt)(random_path);
     auto finish = std::chrono::high_resolution_clock::now();
     auto time = finish - start;
-    return {random_path, path, time};
-}
-
-Result TSP_Solver::solve(Path(TSP_Solver::* opt)(Path) const noexcept) const noexcept {
-    return solve(generate_random_path(), opt);
+    return {path, time, algorithm_name};
 }
 
 Result TSP_Solver::solve() const noexcept {
-    return solve(params.k == 2 ? &TSP_Solver::opt2 : &TSP_Solver::opt3);
-}
-
-Comparison TSP_Solver::compare_opts() const noexcept {
     Path random_path = generate_random_path();
-    return {
-        solve(random_path, &TSP_Solver::opt2),
-        solve(random_path, &TSP_Solver::opt3)
-    };
+    switch (params.k) {
+        case 1:
+            return {
+                random_path,
+                {
+                    solve(random_path, &TSP_Solver::opt2, "opt-2"),
+                    solve(random_path, &TSP_Solver::opt3, "opt-3")
+                }
+            };
+        case 2:
+            return {
+                random_path,
+                {solve(random_path, &TSP_Solver::opt2, "opt-2")}
+            };
+        case 3:
+            return {
+                random_path,
+                {solve(random_path, &TSP_Solver::opt3, "opt-3")}
+            };
+        default:
+            break;
+    }
+    return Result();
 }

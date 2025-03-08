@@ -20,9 +20,10 @@ struct Params {
     Modes mode;
     size_t number_of_vertices;
     Coords* vertices;
-    size_t k;
+    size_t k; // 1 means comparison mode
 
     Params() noexcept;
-    Params(const Params& rhs);
+    Params(const Params&) noexcept;
+    void delete_vertices() noexcept;
     ~Params();
 };

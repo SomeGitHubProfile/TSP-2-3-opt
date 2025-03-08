@@ -6,7 +6,7 @@ Path::Path(size_t _size, long double _length) noexcept : size(_size), length(_le
     vertices = new size_t[size];
 }
 
-Path::Path(const Path& rhs) : size(rhs.size), length(rhs.length) {
+Path::Path(const Path& rhs) noexcept : size(rhs.size), length(rhs.length) {
     vertices = new size_t[size];
     for (size_t i = 0; i < size; ++i) {
         vertices[i] = rhs.vertices[i];

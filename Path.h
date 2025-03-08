@@ -9,7 +9,7 @@ struct Path {
 
     Path() noexcept;
     Path(size_t, long double = 0) noexcept;
-    Path(const Path&);
+    Path(const Path&) noexcept;
     void delete_vertices() noexcept;
     void optimize(const Combination&, long double) noexcept;
     Path& operator=(const Path&);

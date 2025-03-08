@@ -1,5 +1,5 @@
 #pragma once
 
 struct Coords {
-    int x, y;
+    long double x, y;
 };

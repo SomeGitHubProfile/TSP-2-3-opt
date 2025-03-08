@@ -14,10 +14,8 @@ private:
     tuple<Combination, long double, bool> get_miminal_combination(const Path& path, Opt* opt) const noexcept;
     Path opt2(Path) const noexcept;
     Path opt3(Path) const noexcept;
-    Result solve(Path, Path(TSP_Solver::*)(Path) const noexcept) const noexcept;
-    Result solve(Path(TSP_Solver::*)(Path) const noexcept) const noexcept;
+    Solution solve(Path, Path(TSP_Solver::*)(Path) const noexcept, const char* algorithm_name) const noexcept;
 public:
     TSP_Solver(const Params&) noexcept;
     Result solve() const noexcept;
-    Comparison compare_opts() const noexcept;
 };
