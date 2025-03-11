@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "FileView.hpp"
+#include "TimeFormat.hpp"
 
 void ConsoleInputView::set_mode() noexcept {
     cout << "Available modes:\n";
@@ -82,7 +83,8 @@ void ConsoleOutputView::output() noexcept {
     cout << '\n';
     for (const Solution& solution : result.solutions) {
         cout << "Solution by algorithm " << solution.algorithm_name << ":\n";
-        cout << "Time: " << solution.time.count() << " nanoseconds\n";
+        pair<float, string> time = format_time(solution.time);
+        cout << "Time: " << time.first << ' ' << time.second << '\n';
         print_path(solution.path);
         cout << '\n';
     }

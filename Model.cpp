@@ -6,6 +6,7 @@
 
 #include "Random.hpp"
 
+#define EPS 1e-8
 #define sqr(x) ((x) * (x))
 #define path_vertex(i) params.vertices[path.vertices[i]]
 #define get_edge(i) {i, i + 1}
@@ -45,7 +46,7 @@ tuple<Combination, long double, bool> TSPSolver::get_miminal_combination(const P
     bool can_improve = false;
     for (const Combination& combination : opt->combinations) {
         long double distance = calculate_distance(path, combination);
-        if (distance < minimal_distance) {
+        if (distance + EPS < minimal_distance) {
             can_improve = true;
             minimal_distance = distance;
             minimal_combination = combination;
