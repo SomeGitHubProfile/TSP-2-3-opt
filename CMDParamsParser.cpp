@@ -17,10 +17,10 @@ CMDParamsParser::CMDParamsParser(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
         string arg = argv[i++];
         if (params.find(arg) == params.end()) {
-            throw invalid_argument("Error: invalid argument '" + arg + "'.");
+            throw invalid_argument("Error: invalid argument '" + arg + "'.\n");
         }
         if (argc <= i) {
-            throw invalid_argument("Error: '" + arg + "' flag requires a file name.");
+            throw invalid_argument("Error: '" + arg + "' flag requires a file name.\n");
         }
         params[arg] = argv[i];
     }

@@ -3,7 +3,11 @@
 #include <fstream>
 #include <sstream>
 
+#include "json.hpp"
+
 #include "ConsoleView.hpp"
+
+using json = nlohmann::json;
 
 FileInputView::FileInputView(const string& _path) noexcept : path(_path) {}
 
@@ -30,11 +34,16 @@ UPOutputView FileInputView::get_output_view(const Result& result) const noexcept
     return make_unique<ConsoleOutputView>(result);
 }
 
-FileOutputView::FileOutputView(const Result& result, const string& s) noexcept : OutputView(result) {
-    // TODO
-}
+FileOutputView::FileOutputView(const Result& result, const string& _path) noexcept : OutputView(result), path(_path) {}
 
 void FileOutputView::output() {
-    // TODO
+    json j = result.to_json();
+    ofstream file(path);
+    if (file.is_open()) {
+        file << j.dump(4);
+        file.close();
+    } else {
+        throw filesystem::filesystem_error(("Unable to open output file: " + path + '\n'), make_error_code(errc::no_such_file_or_directory));
+    }
     return;
 }
