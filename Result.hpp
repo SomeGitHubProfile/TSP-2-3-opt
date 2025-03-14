@@ -19,11 +19,11 @@ struct Result {
     Result(vector<Solution>) noexcept;
     Result(const Path&, vector<Solution>) noexcept;
 
-    json to_json() const {
+    json to_json() const noexcept {
         json j;
         j["initial_path"] = initial_path.to_json();
         j["solutions"] = json::array();
-        for (const auto& solution : solutions) {
+        for (const Solution& solution : solutions) {
             j["solutions"].push_back(solution.to_json());
         }
         return j;

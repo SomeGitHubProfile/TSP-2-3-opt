@@ -15,7 +15,7 @@ struct Solution {
     chrono::nanoseconds time;
     string algorithm_name;
 
-    json to_json() const {
+    json to_json() const noexcept {
         return json{
             {"path", path.to_json()},
             {"time", time.count()},

@@ -17,7 +17,7 @@ struct Path {
     Path(size_t, long double = 0) noexcept;
     void optimize(const Combination&, long double) noexcept;
 
-    json to_json() const {
+    json to_json() const noexcept {
         return json{
             {"length", length},
             {"vertices", vertices}
