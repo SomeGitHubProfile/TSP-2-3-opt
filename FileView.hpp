@@ -15,13 +15,13 @@ public:
     FileInputView(const string&) noexcept;
     FileInputView(const string&, const string&) noexcept;
     virtual void input() override;
-    virtual UPOutputView get_output_view(const Result& _result) const noexcept override;
+    virtual UPOutputView get_output_view() const noexcept override;
 };
 
 class FileOutputView : public OutputView {
 private:
     string path;
 public:
-    FileOutputView(const Result&, const string&) noexcept;
-    virtual void output() override;
+    FileOutputView(const string&) noexcept;
+    virtual void output(const Result&) override;
 };

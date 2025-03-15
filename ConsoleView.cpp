@@ -59,14 +59,14 @@ void ConsoleInputView::input() noexcept {
     return;
 }
 
-UPOutputView ConsoleInputView::get_output_view(const Result& result) const noexcept {
+UPOutputView ConsoleInputView::get_output_view() const noexcept {
     if (output_file.empty()) {
-        return make_unique<ConsoleOutputView>(result);
+        return make_unique<ConsoleOutputView>();
     }
-    return make_unique<FileOutputView>(result, output_file);
+    return make_unique<FileOutputView>(output_file);
 }
 
-ConsoleOutputView::ConsoleOutputView(const Result& result) noexcept : OutputView(result) {}
+ConsoleOutputView::ConsoleOutputView() noexcept {}
 
 void ConsoleOutputView::print_path(const Path& path) const noexcept {
     cout << "Path length: " << path.length << '\n';
@@ -77,7 +77,7 @@ void ConsoleOutputView::print_path(const Path& path) const noexcept {
     cout << '\n';
 }
 
-void ConsoleOutputView::output() noexcept {
+void ConsoleOutputView::output(const Result& result) noexcept {
     cout << "Initial path:\n";
     print_path(result.initial_path);
     cout << '\n';

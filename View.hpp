@@ -8,13 +8,8 @@
 using namespace std;
 
 class OutputView {
-protected:
-    Result result;
-
 public:
-    OutputView(const Result& _result) noexcept : result(_result) {}
-
-    virtual void output() = 0;
+    virtual void output(const Result&) = 0;
 };
 
 typedef unique_ptr<OutputView> UPOutputView;
@@ -29,7 +24,7 @@ public:
     }
 
     virtual void input() = 0;
-    virtual UPOutputView get_output_view(const Result&) const noexcept = 0;
+    virtual UPOutputView get_output_view() const noexcept = 0;
 };
 
 typedef unique_ptr<InputView> UPInputView;

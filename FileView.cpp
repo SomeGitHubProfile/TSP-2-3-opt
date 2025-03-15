@@ -35,16 +35,16 @@ void FileInputView::input() {
 }
 
 
-UPOutputView FileInputView::get_output_view(const Result& result) const noexcept {
+UPOutputView FileInputView::get_output_view() const noexcept {
     if (output_path.empty()) {
-        return make_unique<ConsoleOutputView>(result);
+        return make_unique<ConsoleOutputView>();
     }
-    return make_unique<FileOutputView>(result, output_path);
+    return make_unique<FileOutputView>(output_path);
 }
 
-FileOutputView::FileOutputView(const Result& result, const string& _path) noexcept : OutputView(result), path(_path) {}
+FileOutputView::FileOutputView(const string& _path) noexcept : path(_path) {}
 
-void FileOutputView::output() {
+void FileOutputView::output(const Result& result) {
     json j = result.to_json();
     ofstream file(path);
     if (file.is_open()) {

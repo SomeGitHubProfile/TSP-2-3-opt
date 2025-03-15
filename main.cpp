@@ -11,8 +11,8 @@ int main(int argc, char* argv[]) {
         input_view->input();
         TSPSolver solver(input_view->get_params());
         Result result = solver.solve();
-        UPOutputView output_view = input_view->get_output_view(result);
-        output_view->output();
+        UPOutputView output_view = input_view->get_output_view();
+        output_view->output(result);
     } catch (const exception& e) {
         cout << "Error!\n";
         cout << e.what() << '\n';

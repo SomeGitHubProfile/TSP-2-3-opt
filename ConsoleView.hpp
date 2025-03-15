@@ -20,13 +20,13 @@ private:
 public:
     ConsoleInputView() noexcept {}
     virtual void input() noexcept override;
-    virtual UPOutputView get_output_view(const Result&) const noexcept override;
+    virtual UPOutputView get_output_view() const noexcept override;
 };
 
 class ConsoleOutputView : public OutputView {
 private:
     void print_path(const Path& path) const noexcept;
 public:
-    ConsoleOutputView(const Result&) noexcept;
-    virtual void output() noexcept override;
+    ConsoleOutputView() noexcept;
+    virtual void output(const Result&) noexcept override;
 };
