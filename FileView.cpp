@@ -9,10 +9,16 @@
 
 using json = nlohmann::json;
 
-FileInputView::FileInputView(const string& _path) noexcept : path(_path) {}
+FileInputView::FileInputView(const string& _input_path) noexcept :
+    input_path(_input_path),
+    output_path("") {}
+
+FileInputView::FileInputView(const string& _input_path, const string& _output_path) noexcept :
+    input_path(_input_path),
+    output_path(_output_path) {}
 
 void FileInputView::input() {
-    ifstream file(path);
+    ifstream file(input_path);
     string s;
     getline(file, s);
     sscanf_s(s.c_str(), "%zu", &params.number_of_vertices);
@@ -30,8 +36,10 @@ void FileInputView::input() {
 
 
 UPOutputView FileInputView::get_output_view(const Result& result) const noexcept {
-    // TODO
-    return make_unique<ConsoleOutputView>(result);
+    if (output_path.empty()) {
+        return make_unique<ConsoleOutputView>(result);
+    }
+    return make_unique<FileOutputView>(result, output_path);
 }
 
 FileOutputView::FileOutputView(const Result& result, const string& _path) noexcept : OutputView(result), path(_path) {}

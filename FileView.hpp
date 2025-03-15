@@ -9,9 +9,11 @@ using namespace std;
 
 class FileInputView : public InputView {
 private:
-    string path;
+    string input_path;
+    string output_path;
 public:
     FileInputView(const string&) noexcept;
+    FileInputView(const string&, const string&) noexcept;
     virtual void input() override;
     virtual UPOutputView get_output_view(const Result& _result) const noexcept override;
 };

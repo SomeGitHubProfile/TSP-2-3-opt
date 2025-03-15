@@ -45,14 +45,14 @@ void ConsoleInputView::set_k() noexcept {
     return;
 }
 
-void ConsoleInputView::set_output_file_name() noexcept {
-    cout << "Please enter the output file name, or press Enter to display the result in the console.\n";
-    getline(cin, output_file_name);
+void ConsoleInputView::set_output_file() noexcept {
+    cout << "Enter path to the output file or press Enter to display the result in the console.\n";
+    getline(cin, output_file);
     return;
 }
 
 void ConsoleInputView::input() noexcept {
-    set_output_file_name();
+    set_output_file();
     set_mode();
     set_k();
     set_vertices();
@@ -60,10 +60,10 @@ void ConsoleInputView::input() noexcept {
 }
 
 UPOutputView ConsoleInputView::get_output_view(const Result& result) const noexcept {
-    if (output_file_name.empty()) {
+    if (output_file.empty()) {
         return make_unique<ConsoleOutputView>(result);
     }
-    return make_unique<FileOutputView>(result, output_file_name);
+    return make_unique<FileOutputView>(result, output_file);
 }
 
 ConsoleOutputView::ConsoleOutputView(const Result& result) noexcept : OutputView(result) {}

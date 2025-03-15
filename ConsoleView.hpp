@@ -10,12 +10,12 @@ using namespace std;
 
 class ConsoleInputView : public InputView {
 private:
-    string output_file_name;
+    string output_file;
 
     void set_mode() noexcept;
     void set_vertices() noexcept;
     void set_k() noexcept;
-    void set_output_file_name() noexcept;
+    void set_output_file() noexcept;
 
 public:
     ConsoleInputView() noexcept {}
