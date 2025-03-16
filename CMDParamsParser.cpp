@@ -30,5 +30,5 @@ UPInputView CMDParamsParser::get_input_view() const noexcept {
     if (get_param(Flags::Input).empty()) {
         return make_unique<ConsoleInputView>();
     }
-    return make_unique<FileInputView>(get_param(Flags::Output));
+    return make_unique<FileInputView>(get_param(Flags::Input), get_param(Flags::Output));
 }

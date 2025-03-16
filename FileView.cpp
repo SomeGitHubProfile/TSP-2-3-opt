@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 #include "json.hpp"
 
@@ -44,7 +45,20 @@ UPOutputView FileInputView::get_output_view() const noexcept {
 
 FileOutputView::FileOutputView(const string& _path) noexcept : path(_path) {}
 
+void FileOutputView::make_directories() const noexcept {
+    filesystem::path file_path(path);
+    filesystem::path directory_path = file_path.parent_path();
+
+    if (directory_path.empty() || filesystem::exists(directory_path)) {
+        return;
+    }
+
+    filesystem::create_directories(directory_path);
+    return;
+}
+
 void FileOutputView::output(const Result& result) {
+    make_directories();
     json j = result.to_json();
     ofstream file(path);
     if (file.is_open()) {

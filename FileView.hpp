@@ -21,6 +21,8 @@ public:
 class FileOutputView : public OutputView {
 private:
     string path;
+
+    void make_directories() const noexcept;
 public:
     FileOutputView(const string&) noexcept;
     virtual void output(const Result&) override;
