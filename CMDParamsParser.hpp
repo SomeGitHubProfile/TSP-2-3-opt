@@ -13,8 +13,8 @@ enum class Flags {
 };
 
 static const unordered_map<Flags, string> flags_strings{
-    {Flags::Input, "-input"},
-    {Flags::Output, "-output"}
+    {Flags::Input, "--input"},
+    {Flags::Output, "--output"}
 };
 
 class CMDParamsParser {
