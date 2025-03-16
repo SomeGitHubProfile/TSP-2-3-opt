@@ -16,6 +16,7 @@ int main(int argc, char* argv[]) {
     } catch (const exception& e) {
         cout << "Error!\n";
         cout << e.what() << '\n';
+        return 1;
     }
     return 0;
 }
