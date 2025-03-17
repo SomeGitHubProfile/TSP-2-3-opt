@@ -12,17 +12,18 @@ def map_list(f, lst):
     return list(map(f, lst))
 
 
-def join_file_name(lst):
-    return 'tsp_' + '_'.join(map_list(str, lst))
+def join_file(lst):
+    return 'tsp_' + '_'.join(map_list(str, lst[0])) + lst[1]
 
 
-def get_input_file_list(input_folder):
+def get_input_file_list(folder_path):
     input_file_list = []
-    for filename in os.listdir(input_folder):
+    for file in os.listdir(folder_path):
+        filename, extension = os.path.splitext(file)
         tsp, N, I = filename.split('_')
-        input_file_list.append(map_list(int, [int(N), int(I)]))
+        input_file_list.append([map_list(int, [N, I]), extension])
     input_file_list.sort()
-    return map_list(join_file_name, input_file_list)
+    return map_list(join_file, input_file_list)
 
 
 def process_files(input_folder, output_folder, exe_file):
@@ -37,6 +38,7 @@ def process_files(input_folder, output_folder, exe_file):
 
             command = [exe_file, '--input', input_file_path, '--output', output_file_path]
             try:
+                print(f'Processing {filename}...')
                 subprocess.run(command, check = True)
                 print(f'Processed {filename} -> {output_file_name}')
                 prettify_json(output_file_path)
@@ -52,12 +54,12 @@ def process_files(input_folder, output_folder, exe_file):
 
 
 if __name__ == '__main__':
+    input_folder = 'data'
+    output_folder = 'output'
+    exe_file = r'Solver\x64\Release\TSP-2-3-OPT.exe'
     try:
-        input_folder = 'data'
-        output_folder = 'output'
-        exe_file = r'Solver\x64\Release\TSP-2-3-OPT.exe'
         process_files(input_folder, output_folder, exe_file)
-        input('Press enter to exit')
     except Exception as e:
+        print('Global error!')
         print(e)
-        input()
+    input('Press enter to exit')
