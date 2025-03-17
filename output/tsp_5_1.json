@@ -1,0 +1,23 @@
+{
+    "initial_path": {
+        "length": 5.446461113496085,
+        "vertices": [0, 4, 2, 1, 3, 0]
+    },
+    "solutions": [
+        {
+            "algorithm_name": "opt-2",
+            "path": {
+                "length": 3.9999999999999996,
+                "vertices": [0, 1, 2, 3, 4, 0]
+            },
+            "time": 10700
+        },
+        {
+            "algorithm_name": "opt-3",
+            "path": {
+                "length": 3.9999999999999996,
+                "vertices": [0, 1, 2, 3, 4, 0]
+            },
+            "time": 28000
+        }]
+}
